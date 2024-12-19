@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FileUpload } from './FileUpload';
 import { CategorySelect } from './CategorySelect';
 import { ProgressSteps } from './ProgressSteps';
@@ -25,13 +25,18 @@ const initialFormData: Report = {
 };
 
 export function ReportForm() {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<Report>(initialFormData);
   const { submitReport, isSubmitting, reportId, reset } = useReportSubmission();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await submitReport(formData);
+    try {
+      await submitReport(formData);
+    } catch (error) {
+      console.error('Failed to submit report:', error);
+    }
   };
 
   const handleReset = () => {
@@ -76,7 +81,7 @@ export function ReportForm() {
         <div className="space-y-6">
           {currentStep === 0 && (
             <div className="space-y-4">
-              <h3 className="text-lg font-medium text-gray-900">Select Report Category</h3>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Select Report Category</h3>
               <CategorySelect
                 value={formData.category}
                 onChange={(category) => updateFormData('category', category)}
@@ -86,7 +91,7 @@ export function ReportForm() {
 
           {currentStep === 1 && (
             <div className="space-y-6">
-              <h3 className="text-lg font-medium text-gray-900">Report Details</h3>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Report Details</h3>
               <Input
                 label="Report Title"
                 required
@@ -121,8 +126,8 @@ export function ReportForm() {
 
           {currentStep === 2 && (
             <div className="space-y-4">
-              <h3 className="text-lg font-medium text-gray-900">Upload Evidence</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Upload Evidence</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Upload any supporting documents, images, or files that help verify your report.
               </p>
               <FileUpload
@@ -134,29 +139,29 @@ export function ReportForm() {
 
           {currentStep === 3 && (
             <div className="space-y-6">
-              <h3 className="text-lg font-medium text-gray-900">Review Your Report</h3>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Review Your Report</h3>
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
                   <Badge>{formData.category}</Badge>
                   <span className="text-gray-500">•</span>
-                  <span className="text-sm text-gray-600">{formData.date}</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">{formData.date}</span>
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900">Title</h4>
-                  <p className="text-gray-700">{formData.title}</p>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100">Title</h4>
+                  <p className="text-gray-700 dark:text-gray-300">{formData.title}</p>
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900">Location</h4>
-                  <p className="text-gray-700">{formData.location}</p>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100">Location</h4>
+                  <p className="text-gray-700 dark:text-gray-300">{formData.location}</p>
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900">Description</h4>
-                  <p className="text-gray-700 whitespace-pre-wrap">{formData.description}</p>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100">Description</h4>
+                  <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{formData.description}</p>
                 </div>
-                {formData.files.length > 0 && (
+                {formData.files?.length > 0 && (
                   <div>
-                    <h4 className="font-medium text-gray-900">Evidence Files</h4>
-                    <ul className="list-disc list-inside text-sm text-gray-600">
+                    <h4 className="font-medium text-gray-900 dark:text-gray-100">Evidence Files</h4>
+                    <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-400">
                       {formData.files.map((file, index) => (
                         <li key={index}>{file.name}</li>
                       ))}

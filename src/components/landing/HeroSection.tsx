@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '../ui/Button';
 import { GhanaCoatOfArms } from '../ui/GhanaCoatOfArms';
 
@@ -19,11 +20,18 @@ export function HeroSection() {
             A secure platform for reporting workplace misconduct, fraud, and ethical concerns. Your voice matters, your identity is protected.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" to="/report">
-              Submit a Report
+            <Button
+              size="lg"
+              asChild
+            >
+              <Link to="/report">Submit a Report</Link>
             </Button>
-            <Button size="lg" variant="outline" to="/status">
-              Check Report Status
+            <Button
+              size="lg"
+              variant="outline"
+              asChild
+            >
+              <Link to="/status">Check Report Status</Link>
             </Button>
           </div>
         </div>

@@ -1,7 +1,9 @@
 import React from 'react';
 import { Download, FileText, Table } from 'lucide-react';
 import { Button } from '../ui/Button';
-import { downloadAsCSV, downloadAsJSON, downloadAsPDF } from '../../utils/download';
+import { downloadAsPDF } from '../../utils/download/pdf';
+import { downloadAsCSV } from '../../utils/download/csv';
+import { downloadAsJSON } from '../../utils/download/json';
 import type { Report } from '../../types/report';
 
 interface ReportDownloadProps {
@@ -9,16 +11,24 @@ interface ReportDownloadProps {
 }
 
 export function ReportDownload({ report }: ReportDownloadProps) {
+  const handlePDFDownload = async () => {
+    try {
+      await downloadAsPDF(report);
+    } catch (error) {
+      console.error('Failed to generate PDF:', error);
+    }
+  };
+
   return (
     <div className="flex flex-wrap gap-2">
       <Button
         variant="outline"
         size="sm"
-        onClick={() => downloadAsPDF(report)}
+        onClick={handlePDFDownload}
         className="flex items-center gap-2"
       >
         <FileText className="w-4 h-4" />
-        PDF
+        Download PDF
       </Button>
 
       <Button
@@ -28,7 +38,7 @@ export function ReportDownload({ report }: ReportDownloadProps) {
         className="flex items-center gap-2"
       >
         <Table className="w-4 h-4" />
-        CSV
+        Download CSV
       </Button>
 
       <Button
@@ -38,7 +48,7 @@ export function ReportDownload({ report }: ReportDownloadProps) {
         className="flex items-center gap-2"
       >
         <Download className="w-4 h-4" />
-        JSON
+        Download JSON
       </Button>
     </div>
   );

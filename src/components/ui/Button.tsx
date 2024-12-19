@@ -1,59 +1,46 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '../../utils/cn';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none transform hover:scale-105 active:scale-95',
+  'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
-        default: 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-gray-900 hover:from-yellow-600 hover:to-yellow-700 shadow-lg hover:shadow-xl',
-        outline: 'border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200',
-        ghost: 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200',
-        link: 'text-yellow-600 dark:text-yellow-400 hover:underline',
+        primary: 'bg-yellow-500 text-gray-900 hover:bg-yellow-600 focus-visible:ring-yellow-500 dark:bg-yellow-600 dark:hover:bg-yellow-700',
+        secondary: 'bg-green-600 text-white hover:bg-green-700 focus-visible:ring-green-600 dark:bg-green-700 dark:hover:bg-green-800',
+        outline: 'border-2 border-gray-200 bg-transparent hover:bg-gray-100 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-800',
       },
       size: {
-        default: 'h-11 px-6 py-2',
-        sm: 'h-9 px-4 text-xs',
-        lg: 'h-12 px-8 text-base',
+        sm: 'h-9 px-3 text-sm',
+        md: 'h-10 px-4 py-2',
+        lg: 'h-11 px-8 text-lg',
       },
     },
     defaultVariants: {
-      variant: 'default',
-      size: 'default',
+      variant: 'primary',
+      size: 'md',
     },
   }
 );
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-  VariantProps<typeof buttonVariants> {
-  to?: string;
+interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
 }
 
-export function Button({ 
-  className = '', 
-  variant, 
-  size, 
-  to,
-  children,
-  ...props 
+export function Button({
+  className,
+  variant,
+  size,
+  asChild = false,
+  ...props
 }: ButtonProps) {
-  const classes = buttonVariants({ variant, size, className });
-
-  if (to) {
-    return (
-      <Link to={to} className={classes}>
-        {children}
-      </Link>
-    );
-  }
-
   return (
     <button
-      className={classes}
+      className={cn(buttonVariants({ variant, size, className }))}
       {...props}
-    >
-      {children}
-    </button>
+    />
   );
 }

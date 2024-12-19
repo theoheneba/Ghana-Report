@@ -1,6 +1,5 @@
 import React from 'react';
-import { InteractiveBarChart } from '../charts/InteractiveBarChart';
-import { ResponsiveGrid } from '../ui/ResponsiveGrid';
+import { SimpleBarChart } from '../charts/SimpleBarChart';
 import { StatsCard } from './StatsCard';
 import { AlertTriangle, FileCheck, Clock, Ban } from 'lucide-react';
 import type { Report } from '../../types/report';
@@ -53,12 +52,10 @@ export function ReportStats({ reports }: ReportStatsProps) {
         />
       </div>
 
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-        <InteractiveBarChart
-          data={categoryData}
-          title="Reports by Category"
-        />
-      </div>
+      <SimpleBarChart
+        data={categoryData}
+        title="Reports by Category"
+      />
     </div>
   );
 }

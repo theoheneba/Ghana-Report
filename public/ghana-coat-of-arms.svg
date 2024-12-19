@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="450" height="450" viewBox="0 0 450 450">
+  <title>Coat of arms of Ghana</title>
+  <desc>Official coat of arms of the Republic of Ghana</desc>
+  <g fill="#fcd116">
+    <path d="M225 0l50 150h-100z"/>
+    <path d="M225 450l-50-150h100z"/>
+    <path d="M0 225l150-50v100z"/>
+    <path d="M450 225l-150 50v-100z"/>
+  </g>
+  <g fill="#006b3f">
+    <path d="M225 75l25 75h-50z"/>
+    <path d="M225 375l-25-75h50z"/>
+    <path d="M75 225l75-25v50z"/>
+    <path d="M375 225l-75 25v-50z"/>
+  </g>
+  <circle cx="225" cy="225" r="75" fill="#ce1126"/>
+  <circle cx="225" cy="225" r="60" fill="#000"/>
+  <path d="M225 165l18 54-45-33h54l-45 33z" fill="#fcd116"/>
+</svg>

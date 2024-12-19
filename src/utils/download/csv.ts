@@ -1,26 +1,28 @@
 import type { Report } from '../../types/report';
-import { downloadFile } from './file';
+import { formatReportData } from './types';
+import { downloadFile } from './core';
 
-export function downloadAsCSV(report: Report) {
+export function downloadAsCSV(report: Report): void {
+  const data = formatReportData(report);
   const rows = [
     ['Field', 'Value'],
-    ['Report ID', report.report_id || ''],
-    ['Title', report.title],
-    ['Category', report.category],
-    ['Status', report.status || 'Pending'],
-    ['Date', new Date(report.date).toLocaleDateString()],
-    ['Location', report.location],
-    ['Description', report.description],
-    ['Submitted', new Date(report.created_at || '').toLocaleDateString()]
+    ['Report ID', data.report_id],
+    ['Title', data.title],
+    ['Category', data.category],
+    ['Status', data.status],
+    ['Date', new Date(data.date).toLocaleDateString()],
+    ['Location', data.location],
+    ['Description', data.description],
+    ['Submitted', data.created_at ? new Date(data.created_at).toLocaleDateString() : '']
   ];
 
   const csvContent = rows
     .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
     .join('\n');
 
-  downloadFile(
-    `report-${report.report_id}.csv`,
-    'text/csv',
-    csvContent
-  );
+  downloadFile({
+    filename: `report-${data.report_id}.csv`,
+    type: 'text/csv',
+    content: csvContent
+  });
 }

@@ -20,7 +20,8 @@ export function useReportSubmission() {
           description: report.description,
           date: report.date,
           location: report.location,
-          willing_to_testify: report.willingToTestify
+          willing_to_testify: report.willing_to_testify || false,
+          involved_parties: report.involved_parties
         }])
         .select('report_id')
         .single();
@@ -28,7 +29,7 @@ export function useReportSubmission() {
       if (error) throw error;
 
       // Then, upload files if any
-      if (report.files.length > 0) {
+      if (report.files?.length > 0) {
         await Promise.all(
           report.files.map(file => uploadFile(file, data.report_id))
         );

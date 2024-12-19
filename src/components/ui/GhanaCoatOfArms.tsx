@@ -1,15 +1,22 @@
 import React from 'react';
+import { cn } from '../../utils/cn';
+import { ASSETS } from '../../constants/assets';
 
 interface GhanaCoatOfArmsProps {
   className?: string;
 }
 
-export function GhanaCoatOfArms({ className = '' }: GhanaCoatOfArmsProps) {
+export function GhanaCoatOfArms({ className }: GhanaCoatOfArmsProps) {
   return (
     <img 
-      src="https://upload.wikimedia.org/wikipedia/commons/5/59/Coat_of_arms_of_Ghana.svg"
+      src={ASSETS.GHANA_COAT_OF_ARMS}
       alt="Ghana Coat of Arms"
-      className={className}
+      className={cn('animate-fadeIn', className)}
+      loading="eager"
+      onError={(e) => {
+        console.error('Failed to load Ghana Coat of Arms');
+        e.currentTarget.style.display = 'none';
+      }}
     />
   );
 }
