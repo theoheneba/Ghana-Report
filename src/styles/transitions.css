@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .transition-base {
+    @apply transition-all duration-200;
+  }
+}
+
+@layer components {
+  .card-hover {
+    @apply hover:shadow-lg transition-base;
+  }
+  
+  .button-hover {
+    @apply hover:scale-105 active:scale-95 transition-base;
+  }
+}
