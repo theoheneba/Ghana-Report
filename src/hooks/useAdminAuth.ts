@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { toast } from 'react-hot-toast';
-import { verifyAdminAndUpdateLogin } from '../utils/admin';
 
 export function useAdminAuth() {
   const [isLoading, setIsLoading] = useState(false);
@@ -25,17 +24,35 @@ export function useAdminAuth() {
       }
 
       if (!authData.user) {
-        throw new Error('No user data returned');
+        throw new Error('Login failed');
       }
 
-      // Verify admin status and update last login
-      await verifyAdminAndUpdateLogin(authData.user.id);
-      
+      // Verify admin status
+      const { data: adminData, error: adminError } = await supabase
+        .from('admin_users')
+        .select('verified, role')
+        .eq('id', authData.user.id)
+        .maybeSingle();
+
+      if (adminError || !adminData) {
+        throw new Error('Access denied');
+      }
+
+      if (!adminData.verified) {
+        throw new Error('Your account is pending verification');
+      }
+
+      // Update last login
+      await supabase
+        .from('admin_users')
+        .update({ last_login: new Date().toISOString() })
+        .eq('id', authData.user.id);
+
       toast.success('Welcome back!');
       navigate('/admin/dashboard');
     } catch (err: any) {
       console.error('Login error:', err);
-      setError(err.message || 'Authentication failed');
+      setError(err.message || 'Login failed');
       toast.error(err.message || 'Login failed');
     } finally {
       setIsLoading(false);

@@ -13,7 +13,10 @@ export function AdminLogin() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await signIn(email, password);
+    if (!email.trim() || !password.trim()) {
+      return;
+    }
+    await signIn(email.trim(), password);
   };
 
   return (
@@ -22,10 +25,10 @@ export function AdminLogin() {
         <div className="flex flex-col items-center">
           <GhanaCoatOfArms className="h-12 w-12" />
           <h2 className="mt-6 text-3xl font-bold text-gray-900 dark:text-white">
-            Admin Portal
+            Welcome Back
           </h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Sign in to access the admin dashboard
+            Sign in to access the dashboard
           </p>
         </div>
 
@@ -47,6 +50,7 @@ export function AdminLogin() {
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
               disabled={isLoading}
+              placeholder="Enter your email"
             />
 
             <Input
@@ -58,13 +62,14 @@ export function AdminLogin() {
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
               disabled={isLoading}
+              placeholder="Enter your password"
             />
           </div>
 
           <Button
             type="submit"
             className="w-full"
-            disabled={isLoading}
+            disabled={isLoading || !email.trim() || !password.trim()}
           >
             {isLoading ? 'Signing in...' : 'Sign in'}
           </Button>

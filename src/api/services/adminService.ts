@@ -1,99 +1,99 @@
 import { supabase } from '../lib/supabase';
-import type { ApiResponse } from '../types/api';
+import type { ApiResponse } from '../types';
 import type { AdminUser } from '../types/admin';
 
 export class AdminService {
-  static async createAdmin(email: string, password: string, name: string): Promise<ApiResponse<AdminUser>> {
+  static async createAdmin(
+    email: string, 
+    password: string, 
+    name: string,
+    role: 'admin' | 'author' = 'author',
+    team_name: string = 'Ghana Report Team'
+  ): Promise<ApiResponse<AdminUser>> {
     try {
+      // First check if user already exists
+      const { data: existingUser } = await supabase
+        .from('admin_users')
+        .select('id')
+        .eq('email', email)
+        .single();
+
+      if (existingUser) {
+        throw new Error('User with this email already exists');
+      }
+
       // Create auth user
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
-        email_confirm: true
+        options: {
+          data: {
+            name,
+            role,
+            team_name
+          }
+        }
       });
 
       if (authError) throw authError;
+      if (!authData.user) throw new Error('Failed to create user');
 
-      // Create admin user record
-      const { data: adminData, error: adminError } = await supabase
-        .from('admin_users')
-        .insert({
-          id: authData.user.id,
-          email: email,
-          name: name
-        })
-        .select()
-        .single();
+      // Wait for trigger to create admin user
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-      if (adminError) throw adminError;
-
-      return {
-        success: true,
-        data: adminData
-      };
-    } catch (error) {
-      console.error('Error creating admin:', error);
-      return {
-        success: false,
-        error: 'Failed to create admin user'
-      };
-    }
-  }
-
-  static async getAdmins(): Promise<ApiResponse<AdminUser[]>> {
-    try {
-      const { data: admins, error } = await supabase
+      // Fetch the created admin user
+      const { data: adminUser, error: fetchError } = await supabase
         .from('admin_users')
         .select('*')
-        .order('created_at', { ascending: false });
+        .eq('id', authData.user.id)
+        .single();
 
-      if (error) throw error;
+      if (fetchError) throw fetchError;
+      if (!adminUser) throw new Error('Failed to create admin user record');
 
       return {
         success: true,
-        data: admins
+        data: adminUser
       };
-    } catch (error) {
-      console.error('Error fetching admins:', error);
+    } catch (error: any) {
+      console.error('Error creating user:', error);
       return {
         success: false,
-        error: 'Failed to fetch admin users'
+        error: error.message || 'Failed to create user'
       };
     }
   }
 
-  static async updateAdmin(id: string, updates: Partial<AdminUser>): Promise<ApiResponse<void>> {
+  static async verifyUser(userId: string): Promise<ApiResponse<void>> {
     try {
-      const { error } = await supabase
-        .from('admin_users')
-        .update(updates)
-        .eq('id', id);
+      const { error } = await supabase.rpc('verify_user', {
+        user_id: userId
+      });
 
       if (error) throw error;
 
       return { success: true };
-    } catch (error) {
-      console.error('Error updating admin:', error);
+    } catch (error: any) {
+      console.error('Error verifying user:', error);
       return {
         success: false,
-        error: 'Failed to update admin user'
+        error: error.message || 'Failed to verify user'
       };
     }
   }
 
   static async deleteAdmin(id: string): Promise<ApiResponse<void>> {
     try {
-      // Delete from auth.users (will cascade to admin_users)
+      // First delete auth user (will cascade to admin_users)
       const { error: authError } = await supabase.auth.admin.deleteUser(id);
-
       if (authError) throw authError;
 
       return { success: true };
-    } catch (error) {
-      console.error('Error deleting admin:', error);
+    } catch (error: any) {
+      console.error('Error deleting user:', error);
       return {
         success: false,
-        error: 'Failed to delete admin user'
+        error: error.message || 'Failed to delete user'
       };
     }
   }

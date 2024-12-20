@@ -11,13 +11,13 @@ export default defineConfig({
       output: {
         manualChunks: {
           'vendor': ['react', 'react-dom', 'react-router-dom'],
-          'pdf': ['jspdf']
+          'supabase': ['@supabase/supabase-js']
         }
       }
     }
   },
   optimizeDeps: {
-    include: ['jspdf', 'react', 'react-dom', 'react-router-dom'],
+    include: ['@supabase/supabase-js'],
     exclude: ['lucide-react']
   }
 });
