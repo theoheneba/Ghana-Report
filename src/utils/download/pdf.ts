@@ -1,131 +1,118 @@
 import { jsPDF } from 'jspdf';
 import type { Report } from '../../types/report';
-import { formatReportData } from './types';
-import { colors } from '../../theme/colors';
-
-const GHANA_LOGO = 'https://upload.wikimedia.org/wikipedia/commons/5/59/Coat_of_arms_of_Ghana.svg';
-const GHANA_FLAG_COLORS = {
-  red: '#CE1126',
-  yellow: '#FFD700',
-  green: '#006B3F'
-};
+import { formatDate } from '../date';
 
 export async function downloadAsPDF(report: Report): Promise<void> {
-  const data = formatReportData(report);
+  // Create new document
   const doc = new jsPDF();
+  const pageWidth = doc.internal.pageSize.width;
   
-  // Add Ghana flag colors stripe
-  doc.setFillColor(GHANA_FLAG_COLORS.red);
-  doc.rect(0, 0, 210, 4, 'F');
-  doc.setFillColor(GHANA_FLAG_COLORS.yellow);
-  doc.rect(0, 4, 210, 4, 'F');
-  doc.setFillColor(GHANA_FLAG_COLORS.green);
-  doc.rect(0, 8, 210, 4, 'F');
-
-  // Add Ghana logo
-  try {
-    const img = await loadImage(GHANA_LOGO);
-    doc.addImage(img, 'PNG', 85, 20, 40, 40);
-  } catch (error) {
-    console.error('Failed to load logo:', error);
-  }
-
-  // Add title and subtitle
+  // Add Ghana flag colors at top
+  addStripe(doc, 0);
+  
+  // Title
   doc.setFontSize(24);
-  doc.setTextColor(colors.text.light);
-  doc.setFont('helvetica', 'bold');
-  doc.text('GHANA REPORT', 105, 75, { align: 'center' });
+  doc.setTextColor(0);
+  doc.text('GHANA REPORT', pageWidth / 2, 40, { align: 'center' });
   
   doc.setFontSize(14);
-  doc.setFont('helvetica', 'normal');
-  doc.text('Official Report Document', 105, 85, { align: 'center' });
+  doc.text('Official Report Document', pageWidth / 2, 50, { align: 'center' });
 
-  // Add metadata box
-  const metadataY = 100;
-  doc.setFillColor(245, 245, 245);
-  doc.roundedRect(20, metadataY, 170, 45, 3, 3, 'F');
-  
-  doc.setFontSize(10);
-  doc.setTextColor(100, 100, 100);
-  
+  // Metadata box
   const metadata = [
-    ['Report ID:', data.report_id],
-    ['Status:', data.status.toUpperCase()],
-    ['Category:', data.category.toUpperCase()],
-    ['Generated:', new Date().toLocaleDateString()]
+    ['Report ID:', report.report_id || ''],
+    ['Status:', (report.status || 'PENDING').toUpperCase()],
+    ['Category:', report.category.toUpperCase()],
+    ['Generated:', formatDate(new Date().toISOString())]
   ];
 
-  metadata.forEach(([label, value], index) => {
-    const y = metadataY + 12 + (index * 10);
-    doc.setFont('helvetica', 'bold');
-    doc.text(label, 30, y);
-    doc.setFont('helvetica', 'normal');
-    doc.text(value, 80, y);
-  });
+  let y = 70;
+  y = addMetadataBox(doc, metadata, y);
 
-  // Add main content sections
-  let y = 160;
+  // Content sections
+  y = addSection(doc, 'Title', report.title, y + 10);
+  y = addSection(doc, 'Location & Date', `Location: ${report.location}\nDate: ${formatDate(report.date)}`, y + 10);
+  y = addSection(doc, 'Description', report.description, y + 10);
 
-  // Title section
-  addSection(doc, 'Title', data.title, y);
-  y += 40;
-
-  // Location and date
-  addSection(doc, 'Location & Date', [
-    `Location: ${data.location}`,
-    `Date: ${new Date(data.date).toLocaleDateString()}`
-  ], y);
-  y += 40;
-
-  // Description section
-  addSection(doc, 'Description', data.description, y);
-
-  // Add footer
+  // Footer
   const pageHeight = doc.internal.pageSize.height;
-  doc.setFillColor(245, 245, 245);
-  doc.rect(0, pageHeight - 20, 210, 20, 'F');
+  addStripe(doc, pageHeight - 15);
   
   doc.setFontSize(8);
-  doc.setTextColor(100, 100, 100);
-  doc.text('This is an official document from the Ghana Report system.', 105, pageHeight - 12, { align: 'center' });
-  doc.text('Please handle with confidentiality.', 105, pageHeight - 6, { align: 'center' });
+  doc.setTextColor(100);
+  doc.text('This is an official document from the Ghana Report system.', pageWidth / 2, pageHeight - 25, { align: 'center' });
+  doc.text('Please handle with confidentiality.', pageWidth / 2, pageHeight - 20, { align: 'center' });
 
-  // Save the PDF
-  doc.save(`ghana-report-${data.report_id}.pdf`);
+  // Save PDF
+  doc.save(`ghana-report-${report.report_id}.pdf`);
 }
 
-function addSection(doc: jsPDF, title: string, content: string | string[], y: number): void {
-  // Add section marker
-  doc.setFillColor(GHANA_FLAG_COLORS.yellow);
-  doc.rect(20, y, 3, 10, 'F');
+function addStripe(doc: jsPDF, y: number) {
+  const width = doc.internal.pageSize.width;
   
-  // Add title
-  doc.setFontSize(16);
-  doc.setTextColor(colors.text.light);
-  doc.setFont('helvetica', 'bold');
-  doc.text(title, 30, y + 8);
+  // Red stripe
+  doc.setFillColor(206, 17, 38);
+  doc.rect(0, y, width, 4, 'F');
   
-  // Add content
-  y += 20;
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'normal');
+  // Yellow stripe with star
+  doc.setFillColor(255, 215, 0);
+  doc.rect(0, y + 4, width, 4, 'F');
   
-  if (Array.isArray(content)) {
-    content.forEach((line, index) => {
-      doc.text(line, 30, y + (index * 10));
-    });
-  } else {
-    const lines = doc.splitTextToSize(content, 150);
-    doc.text(lines, 30, y);
-  }
+  // Black star
+  doc.setFillColor(0);
+  const starPoints = [
+    [width/2, y + 4.8],
+    [width/2 + 1.5, y + 7.2],
+    [width/2 - 1.5, y + 7.2]
+  ];
+  doc.triangle(
+    starPoints[0][0], starPoints[0][1],
+    starPoints[1][0], starPoints[1][1],
+    starPoints[2][0], starPoints[2][1],
+    'F'
+  );
+  
+  // Green stripe
+  doc.setFillColor(0, 107, 63);
+  doc.rect(0, y + 8, width, 4, 'F');
 }
 
-async function loadImage(url: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => resolve(img);
-    img.onerror = reject;
-    img.src = url;
+function addMetadataBox(doc: jsPDF, metadata: [string, string][], y: number): number {
+  const padding = 10;
+  const lineHeight = 7;
+  
+  // Background
+  doc.setFillColor(245, 245, 245);
+  doc.rect(20, y, doc.internal.pageSize.width - 40, metadata.length * lineHeight + padding * 2, 'F');
+  
+  // Content
+  doc.setFontSize(10);
+  metadata.forEach(([label, value], index) => {
+    const yPos = y + padding + (index * lineHeight);
+    doc.setFont('helvetica', 'bold');
+    doc.text(label, 30, yPos);
+    doc.setFont('helvetica', 'normal');
+    doc.text(value, 100, yPos);
   });
+  
+  return y + (metadata.length * lineHeight) + (padding * 2);
+}
+
+function addSection(doc: jsPDF, title: string, content: string, y: number): number {
+  // Yellow marker
+  doc.setFillColor(255, 215, 0);
+  doc.rect(20, y, 3, 8, 'F');
+  
+  // Title
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.text(title, 30, y + 6);
+  
+  // Content
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  const lines = doc.splitTextToSize(content, 160);
+  doc.text(lines, 30, y + 15);
+  
+  return y + 20 + (lines.length * 5);
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Lock, Shield, Eye, Clock, FileCheck, UserCheck } from 'lucide-react';
-import { GhanaFlagLine } from '../ui/GhanaFlagLine';
+import { GhanaFlagLine } from '../ui/ghana';
 
 const features = [
   {
@@ -39,9 +39,9 @@ export function FeatureSection() {
   return (
     <div className="bg-white dark:bg-gray-900 py-24">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+        <GhanaFlagLine className="mb-16" />
         <div className="text-center mb-16">
-          <GhanaFlagLine />
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 mt-8">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
             Why Choose Our Platform?
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300">
@@ -55,7 +55,7 @@ export function FeatureSection() {
               key={index}
               className="p-6 rounded-xl bg-gray-50 dark:bg-gray-800 hover:shadow-lg transition-all duration-300"
             >
-              <feature.icon className="h-8 w-8 text-yellow-500 dark:text-yellow-400 mb-4" />
+              <feature.icon className="h-8 w-8 text-ghana-yellow dark:text-ghana-yellow/90 mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                 {feature.title}
               </h3>

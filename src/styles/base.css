@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --ghana-red: #CE1126;
+    --ghana-yellow: #FFD700;
+    --ghana-green: #006B3F;
+  }
+
+  body {
+    @apply antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-ghana-yellow text-gray-900 hover:bg-ghana-yellow/90;
+  }
+
+  .btn-outline {
+    @apply border border-gray-200 bg-white hover:bg-gray-100;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow-lg p-6;
+  }
+}

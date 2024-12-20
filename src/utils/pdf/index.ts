@@ -1,0 +1,1 @@
+export { generatePDF as downloadAsPDF } from './generator';

@@ -12,13 +12,6 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: true,
-    flowType: 'pkce'
-  },
-  global: {
-    // Disable headers that might contain IP information
-    headers: {
-      'X-Client-Info': 'noip'
-    }
+    detectSessionInUrl: true
   }
 });

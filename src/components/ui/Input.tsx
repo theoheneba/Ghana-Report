@@ -31,7 +31,7 @@ export function Input({
           className={cn(
             "block w-full rounded-lg border border-gray-300 dark:border-gray-600",
             "bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100",
-            "shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+            "shadow-sm focus:ring-2 focus:ring-ghana-yellow focus:border-ghana-yellow",
             "placeholder:text-gray-400 dark:placeholder:text-gray-500",
             "disabled:opacity-50 disabled:cursor-not-allowed",
             "transition-all duration-200",

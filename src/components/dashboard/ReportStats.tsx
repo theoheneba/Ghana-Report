@@ -1,5 +1,5 @@
 import React from 'react';
-import { SimpleBarChart } from '../charts/SimpleBarChart';
+import { ReportCharts } from './ReportCharts';
 import { StatsCard } from './StatsCard';
 import { AlertTriangle, FileCheck, Clock, Ban } from 'lucide-react';
 import type { Report } from '../../types/report';
@@ -15,13 +15,6 @@ export function ReportStats({ reports }: ReportStatsProps) {
     resolved: reports.filter(r => r.status === 'resolved').length,
     dismissed: reports.filter(r => r.status === 'dismissed').length
   };
-
-  const categoryData = Object.entries(
-    reports.reduce((acc, report) => {
-      acc[report.category] = (acc[report.category] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>)
-  ).map(([category, count]) => ({ category, count }));
 
   return (
     <div className="space-y-8">
@@ -52,10 +45,7 @@ export function ReportStats({ reports }: ReportStatsProps) {
         />
       </div>
 
-      <SimpleBarChart
-        data={categoryData}
-        title="Reports by Category"
-      />
+      <ReportCharts reports={reports} />
     </div>
   );
 }

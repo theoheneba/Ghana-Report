@@ -3,6 +3,7 @@ import { toast } from 'react-hot-toast';
 import { AdminService } from '../../api/services/adminService';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
+import { Select } from '../ui/Select';
 import type { CreateAdminData } from '../../api/types/admin';
 
 interface AdminUserFormProps {
@@ -13,7 +14,9 @@ export function AdminUserForm({ onSuccess }: AdminUserFormProps) {
   const [formData, setFormData] = useState<CreateAdminData>({
     email: '',
     password: '',
-    name: ''
+    name: '',
+    role: 'author',
+    team_name: 'Ghana Report Team'
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -25,19 +28,21 @@ export function AdminUserForm({ onSuccess }: AdminUserFormProps) {
       const result = await AdminService.createAdmin(
         formData.email,
         formData.password,
-        formData.name
+        formData.name,
+        formData.role,
+        formData.team_name
       );
 
       if (!result.success) {
         throw new Error(result.error);
       }
 
-      toast.success('Admin user created successfully');
-      setFormData({ email: '', password: '', name: '' });
+      toast.success('User created successfully');
+      setFormData({ email: '', password: '', name: '', role: 'author', team_name: 'Ghana Report Team' });
       onSuccess?.();
     } catch (error) {
-      toast.error('Failed to create admin user');
-      console.error('Error creating admin:', error);
+      toast.error('Failed to create user');
+      console.error('Error creating user:', error);
     } finally {
       setIsLoading(false);
     }
@@ -66,8 +71,23 @@ export function AdminUserForm({ onSuccess }: AdminUserFormProps) {
         value={formData.password}
         onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
       />
+      <Select
+        label="Role"
+        value={formData.role}
+        onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value as 'admin' | 'author' }))}
+        options={[
+          { value: 'author', label: 'Author' },
+          { value: 'admin', label: 'Administrator' }
+        ]}
+      />
+      <Input
+        label="Team Name"
+        value={formData.team_name}
+        onChange={(e) => setFormData(prev => ({ ...prev, team_name: e.target.value }))}
+        placeholder="Ghana Report Team"
+      />
       <Button type="submit" disabled={isLoading}>
-        {isLoading ? 'Creating...' : 'Create Admin User'}
+        {isLoading ? 'Creating...' : 'Create User'}
       </Button>
     </form>
   );

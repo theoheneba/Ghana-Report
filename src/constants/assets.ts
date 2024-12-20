@@ -3,6 +3,7 @@ export const ASSETS = {
   GHANA_FLAG_COLORS: {
     red: '#CE1126',
     yellow: '#FFD700',
-    green: '#006B3F'
+    green: '#006B3F',
+    black: '#000000'
   }
 } as const;

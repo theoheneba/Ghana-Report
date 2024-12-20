@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FadeIn } from '../animations/FadeIn';
-import { Header } from './Header';
+import { Button } from '../ui/Button';
+import { GhanaCoatOfArms } from '../ui/ghana/GhanaCoatOfArms';
+import { HeaderStrip } from '../ui/ghana/HeaderStrip';
+import { ThemeToggle } from '../ui/ThemeToggle';
+import { Footer } from './Footer';
 
 interface PageLayoutProps {
   children: React.ReactNode;
@@ -9,56 +12,63 @@ interface PageLayoutProps {
   subtitle?: string;
 }
 
-export function PageLayout({ children, title = "Ghana Report", subtitle }: PageLayoutProps) {
+export function PageLayout({ children, title, subtitle }: PageLayoutProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <Header />
-
-      <main className="max-w-[1600px] mx-auto px-4">
-        <FadeIn>{children}</FadeIn>
-      </main>
-
-      <footer className="mt-auto py-8 border-t border-gray-200 dark:border-gray-700">
-        <div className="max-w-[1600px] mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Quick Links</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link to="/report" className="text-sm text-gray-600 dark:text-gray-400 hover:text-yellow-600 dark:hover:text-yellow-400">
-                    Submit Report
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/status" className="text-sm text-gray-600 dark:text-gray-400 hover:text-yellow-600 dark:hover:text-yellow-400">
-                    Check Status
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Legal</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link to="/privacy" className="text-sm text-gray-600 dark:text-gray-400 hover:text-yellow-600 dark:hover:text-yellow-400">
-                    Privacy Policy
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/terms" className="text-sm text-gray-600 dark:text-gray-400 hover:text-yellow-600 dark:hover:text-yellow-400">
-                    Terms of Service
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                © {new Date().getFullYear()} Ghana Report. All rights reserved.
-              </p>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+      <header className="bg-white dark:bg-gray-800 shadow-sm">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <Link to="/" className="flex items-center space-x-3">
+              <GhanaCoatOfArms className="h-10 w-10" />
+              <div className="flex flex-col space-y-1">
+                <span className="text-xl font-bold text-gray-900 dark:text-white">
+                  Ghana Report
+                </span>
+                <HeaderStrip className="w-full" />
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Secure Anonymous Reporting
+                </p>
+              </div>
+            </Link>
+            
+            <div className="flex items-center space-x-4">
+              <Link to="/blog" className="text-gray-600 dark:text-gray-300 hover:text-ghana-yellow">
+                Blog
+              </Link>
+              <ThemeToggle />
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/status">Check Status</Link>
+              </Button>
+              <Button size="sm" asChild>
+                <Link to="/report">Submit Report</Link>
+              </Button>
             </div>
           </div>
         </div>
-      </footer>
+      </header>
+
+      {(title || subtitle) && (
+        <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+          <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {title && (
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                {title}
+              </h1>
+            )}
+            {subtitle && (
+              <p className="mt-2 text-lg text-gray-600 dark:text-gray-300">
+                {subtitle}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      <main className="flex-1 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {children}
+      </main>
+
+      <Footer />
     </div>
   );
 }
