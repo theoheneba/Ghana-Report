@@ -25,7 +25,7 @@ cp -r dist/* /var/www/ghana-report/
 cp deploy/nginx.conf /etc/nginx/nginx.conf
 
 # Get SSL certificate
-certbot --nginx -d your-domain.com --non-interactive --agree-tos --email your-email@domain.com
+certbot --nginx -d ghreportbuzz.com --non-interactive --agree-tos --email info@ghreportbuzz.com
 
 # Secure Nginx logs
 chmod 640 /var/log/nginx/*
